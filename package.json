@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/FIT-HNEE/Server-WSData/issues"
   },
-  "homepage": "https://github.com/FIT-HNEE/Server-WSData#readme"
+  "homepage": "https://github.com/FIT-HNEE/Server-WSData#readme",
+  "devDependencies": {
+    "typescript": "^4.3.5"
+  }
 }
