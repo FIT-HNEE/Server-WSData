@@ -45,18 +45,18 @@ class UserController {
         user.password = password
 
         //Validate if the parameters are ok
-        //const errors = await validate(user);
-        /* if (errors.length > 0) {
+        const errors = await validate(user);
+        if (errors.length > 0) {
             res.status(400).send(errors);
             return;
-        } */
+        }
 
         //Hash the password to securely store on DB
         //user.hashPassword();
 
         //Try to save. If fails, the username is already in use
         const userRepository = getRepository(User);
-        console.log(userRepository)
+        //console.log(userRepository)
         try {
             await userRepository.save(user);
         } catch (error) {
@@ -106,8 +106,8 @@ class UserController {
             res.status(409).send("username already in use");
             return;
         }
-        //After all send a 204( no content, but accepted) response
-        res.status(204).send()
+        //After all send a 201 with updated user content
+        res.status(201).send(user)
     };
 
     static deleteUser = async (req: Request, res: Response) => {
