@@ -6,9 +6,12 @@ const config: ConnectionOptions = {
     port: Number(process.env.POSTGRES_PORT) || 5432,
     username: process.env.POSTGRES_USER || "postgres",
     password: process.env.POSTGRES_PASSWORD || "postgres",
-    database: process.env.POSTGRES_DB || "postgres",
+    database: process.env.POSTGRES_DB || "climatic-data-project",
     entities: [User],
     synchronize: true,
+    cli: {
+        migrationsDir: 'src/migration',
+    }
 };
 
 export default config;
