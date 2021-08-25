@@ -8,13 +8,19 @@ class UserController {
     
     static listAll = async (req: Request, res: Response) => {
         // Get users from Database
-        const userRepository = getRepository(User);
+        try {
+            const userRepository = getRepository(User);
+            //console.log(userRepository)
         const users = await userRepository.find({
             select: ["id", "firstName", "lastName", "email", "role"]
         });
 
         //Send the users object
         res.send(users)
+        } catch (error) {
+            res.status(404).send(error);
+        }
+       
     }
 
     static getOneById = async (req: Request, res: Response) => {
