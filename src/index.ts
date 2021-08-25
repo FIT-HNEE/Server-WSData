@@ -7,7 +7,7 @@ import helmet from "helmet";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from '../doc/swagger.json'
-import dbConfig from './config/database';
+import dbConfig from './config/ormConfig';
 
 const PORT = process.env.PORT || 4000;
 
