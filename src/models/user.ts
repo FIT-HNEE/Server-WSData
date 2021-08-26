@@ -3,14 +3,16 @@ import {
     PrimaryGeneratedColumn,
     Column,
     CreateDateColumn,
-    UpdateDateColumn  
+    UpdateDateColumn,
+    OneToMany,
+    BaseEntity
 } from 'typeorm';
-
+import {RefreshToken} from './token'
 import { Length, IsNotEmpty } from "class-validator";
 import bcrypt from "bcryptjs";
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
     
     @PrimaryGeneratedColumn()
     id!: number;
@@ -33,6 +35,12 @@ export class User {
     
     @Column()
     role!: string;
+
+   /*  @Column({ array: true })
+    refreshTokens!: [{ token: String }]; */
+    
+    @OneToMany(() => RefreshToken, refreshToken => refreshToken.tokens)
+    refreshTokens!: RefreshToken[];
 
     @Column()
     @CreateDateColumn()        
