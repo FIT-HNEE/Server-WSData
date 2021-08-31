@@ -27,6 +27,8 @@ router.get("/:id", passport.authenticate("scope.me"), tokenHandler);
 router.get("/", passport.authenticate("scope.all"), tokenHandler)
 
 router.put("/:id", passport.authenticate("scope.edit"), tokenHandler)
+
+router.delete("/:id", passport.authenticate("scope.delete"), tokenHandler)
 /* router.put(
   "/:id",
   passport.authenticate("scope.me"),
@@ -74,13 +76,44 @@ router.put("/:id", passport.authenticate("scope.edit"), tokenHandler)
 /* router.delete(
   "/:id",
   passport.authenticate("scope.me"),
-  async (req, res, next) => {
-    try {
-      const user = await Users.findByIdAndDelete(req.params.id);
-      res.send(user);
-    } catch (e) {
-      next(new ApiError(500, "Delete profile is not successfull", false));
-    }
+  async (req, res) => {
+    //Get the ID from the url
+        const id = req.params.id;
+
+        const userRepository = getRepository(User);
+        //let user: User;
+        try {
+             await userRepository.findOneOrFail(id);
+        } catch (error) {
+            res.status(404).send("User not found");
+            return;
+        }
+        userRepository.delete(id);
+
+        
+        res.status(204).send('User deleted');
+  }
+);
+ */
+/* router.delete(
+  "/:id/:userId",
+  passport.authenticate("scope.me"),
+  async (req, res) => {
+    //Get the ID from the url
+    const id = req.params.id;
+    const _id = req.params.userId;
+
+    const userRepository = getRepository(User);
+    const user = await userRepository.findOneOrFail(id);
+        //let user: User;
+        if (user.isAdmin === true) {
+          await userRepository.findOne({ where: { id: _id } })
+           userRepository.delete(_id);       
+          res.status(200).send('User with firstName Deleted');          
+          } else {
+             res.status(400).send('Something went wrong');
+          }
+       
   }
 ); */
 
