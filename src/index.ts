@@ -11,7 +11,7 @@ import cors from "cors";
 import dbConfig from './config/ormConfig';
 import passport from '@utils/passport/passport';
 //import ApiError from "@middlewares/ErrorHandling/ApiError";
-import errorHandler from '@middlewares/ErrorHandling/ErrorHandler';
+//import errorHandler from '@middlewares/ErrorHandling/ErrorHandler';
 
 const PORT = process.env.PORT || 4000;
 
@@ -22,7 +22,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(morgan("tiny"));
 app.use(express.static("public"));
-app.use(errorHandler)
+//app.use(errorHandler)
 /* app.use((req,res) => {
   if(!req.route&&!res.headersSent){
     res.status(404).send(new ApiError(404,'This route is not found',true))
