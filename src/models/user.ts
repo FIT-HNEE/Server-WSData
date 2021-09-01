@@ -4,18 +4,16 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn,
-    OneToMany,
-    BaseEntity
+    
 } from 'typeorm';
-import {RefreshToken} from './token'
-import { Length, IsNotEmpty } from "class-validator";
+//import { Length, IsNotEmpty } from "class-validator";
 import bcrypt from "bcryptjs";
 
 @Entity()
-export class User extends BaseEntity {
+export class User {
     
-    @PrimaryGeneratedColumn()
-    id!: number;
+    @PrimaryGeneratedColumn("uuid")
+    id!: string;
 
     @Column()
     firstName!: string;
@@ -31,17 +29,11 @@ export class User extends BaseEntity {
 
     @Column()
    /*  @Length(3, 100) */
-    password!: string;
+    password!: string;    
     
-    @Column()
-    role!: string;
-
-   /*  @Column({ array: true })
-    refreshTokens!: [{ token: String }]; */
+    @Column('boolean', {default: false})
+    isAdmin: boolean;
     
-    @OneToMany(() => RefreshToken, refreshToken => refreshToken.tokens)
-    refreshTokens!: RefreshToken[];
-
     @Column()
     @CreateDateColumn()        
     createdAt!: Date;     
