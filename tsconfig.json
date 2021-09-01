@@ -1,13 +1,54 @@
 {
     "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
+        "target": "es2017",
         "outDir": "./build",
-        "strict": true,
-        "emitDecoratorMetadata": true,
+        "rootDir": "src",
+        "moduleResolution": "node",
+        "module": "commonjs",
         "experimentalDecorators": true,
-        "resolveJsonModule": true,
+        "emitDecoratorMetadata": true,
+        "declaration": true,
+        "inlineSourceMap": true,
         "esModuleInterop": true,
-        "baseUrl": "./",
-    }
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "traceResolution": false,
+        "listEmittedFiles": false,
+        "listFiles": false,
+        "pretty": true,
+        "lib": [
+            "es2017"
+        ],
+        "types": [
+            "node"
+        ],
+        "typeRoots": [
+            "node_modules/@types",
+            "src/types"
+        ],
+        "baseUrl": "./src",
+        "paths": {
+            "@utils/*": [
+                "utils/*"
+            ],
+            "@models/*": [
+                "models/*"
+            ],
+            "@controllers/*": [
+                "controllers/*"
+            ],
+            "@middlewares/*": [
+                "middlewares/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules/**"
+    ],
+    "compileOnSave": false
 }
