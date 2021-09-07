@@ -14,6 +14,19 @@ import { getRepository } from 'typeorm';
 
 import { validate } from 'class-validator';
 
+import nodemailer from 'nodemailer';
+
+//import jwt from 'jsonwebtoken';
+
+
+const transport = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: 'pakswim@gmail.com',
+    pass: 'Moonstar@1987',
+  },
+});
+
 const cookieExtractor = function (req) {
   var token = null;
   if (req && req.cookies) {
@@ -264,17 +277,30 @@ passport.use(
           user.password = password
         user.hashPassword();
         
+        
          //Validate if the parameters are ok
         const errors = await validate(user);
         if (errors.length > 0) {
             res.status(400).send(errors);
             return;
         }
-          const userRepository = getRepository(User);
-          await userRepository.save(user);
+        await getRepository(User);
+          //const userRepository = getRepository(User);
+          //await userRepository.save(user);
           console.log("User", user)
           const tokens = await TokenPairs({ id: user.id });
-          console.log("Registration_Tokens", tokens)
+        console.log("Registration_Tokens", tokens)
+        transport.sendMail({
+          from: 'fit.github@gmail.com',
+          to: email,
+          subject: "Please confirm your account",
+          html: `<h1>Email Confirmation</h1>
+              <h2>Hello ${lastName}</h2>
+              <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
+              <a href=http://localhost:4000/confirm/${tokens.accessToken}> Click here</a>
+              </div>`,
+        }).catch(err => console.log(err));
+        
           done(null, { user, tokens });
         
       } catch (error) {
