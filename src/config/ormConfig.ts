@@ -8,7 +8,7 @@ const config: ConnectionOptions = {
     password: process.env.POSTGRES_PASSWORD || "postgres",
     database: process.env.POSTGRES_DB || "climatic-data-project",
     entities: [User],
-    synchronize: false,
+    synchronize: true,
     cli: {
         migrationsDir: 'src/migration',
     }
