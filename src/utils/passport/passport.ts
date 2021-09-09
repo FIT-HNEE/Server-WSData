@@ -16,9 +16,6 @@ import { validate } from 'class-validator';
 
 import nodemailer from 'nodemailer';
 
-//import jwt from 'jsonwebtoken';
-
-
 const transport = nodemailer.createTransport({
   service: "Gmail",
   auth: {
@@ -243,7 +240,8 @@ passport.use(
             return;
         }
 
-        if (user.checkIfUnencryptedPasswordIsValid(password)) {
+        if (user.confirmation !== false) {
+          if (user.checkIfUnencryptedPasswordIsValid(password)) {
          
           const tokens = await TokenPairs({ id: user.id });
           console.log('tokens',tokens )
@@ -252,6 +250,11 @@ passport.use(
         } else {
           done("User not found.", null);
         }
+        } else {
+          done('Please confirm your account', null)
+        }
+
+        
       } catch (error) {
         done(error, null);
       }
@@ -268,43 +271,65 @@ passport.use(
       try {
        
           //Get parameters from the body
-          let { firstName, lastName, isAdmin, email, password } = req.body;
-          let user = new User();
-          user.firstName = firstName;
-          user.lastName = lastName;
-          user.isAdmin = isAdmin;
-          user.email = email;
-          user.password = password
+        let { firstName, lastName, isAdmin, email, password } = req.body;
+        
+        let user = new User();
+        
+        user.firstName = firstName;
+        
+        user.lastName = lastName;
+        
+        user.isAdmin = isAdmin;
+        
+        user.email = email;
+        
+        user.password = password
+        
         user.hashPassword();
+        
+        const userRepository = getRepository(User);
+        
+        await userRepository.save(user);
         
         
          //Validate if the parameters are ok
         const errors = await validate(user);
+
         if (errors.length > 0) {
-            res.status(400).send(errors);
-            return;
+
+          res.status(400).send(errors);
+          
+          return;
+          
         }
-        await getRepository(User);
-          //const userRepository = getRepository(User);
-          //await userRepository.save(user);
-          console.log("User", user)
-          const tokens = await TokenPairs({ id: user.id });
-        console.log("Registration_Tokens", tokens)
-        transport.sendMail({
-          from: 'fit.github@gmail.com',
+
+      try {        
+        const tokens = await TokenPairs({ id: user.id });        
+        const token: any = tokens.accessToken
+       /*  let decode = jwt.verify(token,JWT_ACCESS_SECRET )
+        console.log('decode', (<any>decode).id)
+        console.log('token', token) */
+         const url = `http://localhost:4000/api/users/confirmation/${token}`;
+
+        await transport.sendMail({
+          from: 'pakswim@gmail.com',
           to: email,
           subject: "Please confirm your account",
           html: `<h1>Email Confirmation</h1>
               <h2>Hello ${lastName}</h2>
               <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
-              <a href=http://localhost:4000/confirm/${tokens.accessToken}> Click here</a>
+              <a href="${url}"> ${url}</a>
               </div>`,
-        }).catch(err => console.log(err));
-        
-          done(null, { user, tokens });
-        
+        })
+       } catch (e) {
+         console.log(e);
+       }
+        done(null, { user });
+
       } catch (error) {
+
         done(error, null);
+        
       }
     }
   )
