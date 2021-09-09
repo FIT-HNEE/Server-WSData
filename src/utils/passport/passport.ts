@@ -6,7 +6,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 
 import passport from "passport";
 
-import { TokenPairs } from "../jwt/jwt";
+import { TokenPairs } from "@utils/jwt/jwt";
 
 import { User } from "@models/user";
 
