@@ -73,35 +73,40 @@ class UserController {
         const { email } = req.body
         const userRepository = getRepository(User);
         const user = await userRepository.findOneOrFail({ where: { email } });
-         
-        if (!user || user.confirmation === true) {
+
+        if (!user) {
             return res
                 .status(400)
-                .json({ message: `${email} is incorrect or already verified`})            
-        } else {
-             try {        
-        const tokens = await TokenPairs({ id: user.id });        
-        const token: any = tokens.accessToken
-         const url = `http://localhost:4000/api/users/confirmation/${token}`;
-
-        await transport.sendMail({
-          from: 'pakswim@gmail.com',
-          to: email,
-          subject: "Please confirm your account",
-          html: `<h1>Email Confirmation</h1>
-              <h2>Hello ${user.lastName}</h2>
-              <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
-              <a href="${url}"> ${url}</a>
-              </div>`,
-        })
-                 return res
+                .json({ message: `${email} is incorrect `})
+        } else if (user.confirmation === true) {
+            return res
                 .status(400)
-                .json({ message: `Link to ${user.lastName} has been send`, User: user })
-       } catch (e) {
-         console.log(e);
-       }
-        }
+                .json({ message: `${email} is already verified`})
 
+        } else {
+            try {
+                
+                const tokens = await TokenPairs({ id: user.id });        
+                const token: any = tokens.accessToken
+                const url = `http://localhost:4000/api/users/confirmation/${token}`;
+
+                await transport.sendMail({
+                from: 'pakswim@gmail.com',
+                to: email,
+                subject: "Please confirm your account",
+                html: `<h1>Email Confirmation</h1>
+                    <h2>Hello ${user.lastName}</h2>
+                    <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
+                    <a href="${url}"> ${url}</a>
+                    </div>`,
+                })
+                        return res
+                        .status(400)
+                        .json({ message: `Link to ${user.lastName} has been send`, User: user })
+            } catch (e) {                
+                console.log(e);                
+            }           
+        }
     }
 
 
