@@ -14,7 +14,9 @@ const router = express.Router();
 
 router.post("/register", passport.authenticate("auth.register"), tokenHandler);
 
-router.get('/confirmation/:token', UserController.activateAcount )
+router.get('/confirmation/:token', UserController.activateAcount)
+
+router.post('/email/resend', UserController.resendLink)
 
 router.post("/login", passport.authenticate("auth.login"), tokenHandler);
 
