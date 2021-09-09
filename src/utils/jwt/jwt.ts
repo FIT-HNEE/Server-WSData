@@ -1,6 +1,6 @@
 require("dotenv").config();
-
 import jwt from 'jsonwebtoken';
+
 
 const {
     JWT_ACCESS_SECRET,
@@ -51,10 +51,4 @@ new Promise((resolve, reject) => {
     })
 })
 
-export const verifyJWT = (token, secret): Promise<{ _id: string }> =>
-  new Promise((res, rej) =>
-    jwt.verify(token, secret, (err, decoded) => {
-      if (err) rej(err);
-      res(decoded);
-    })
-  );
+
