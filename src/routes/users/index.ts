@@ -6,9 +6,15 @@ import tokenHandler from "../../middlewares/TokenHandler/TokenHandler";
 
 //import ApiError from '../middlewares/ErrorHandling/ApiError';
 
+import UserController from '../../controllers/UserController'
+
 const router = express.Router();
 
+//Routes
+
 router.post("/register", passport.authenticate("auth.register"), tokenHandler);
+
+router.get('/confirmation/:token', UserController.activateAcount )
 
 router.post("/login", passport.authenticate("auth.login"), tokenHandler);
 
@@ -20,22 +26,7 @@ router.put("/:id", passport.authenticate("scope.edit"), tokenHandler)
 
 router.delete("/:id", passport.authenticate("scope.delete"), tokenHandler)
 
-router.get('/logout', async function (req, res, next) {
-  try {
-    
-    // clear cookie when logging out
-    await res.clearCookie("accessToken");    
-    await res.clearCookie("refreshToken");    
-    await req.logout();   
-  
- //res.redirect('/');
-    res.status(200).json({    
-      status: 'Bye!'      
-    });
-    
-  } catch (error) {
-    next(error)
-  }
+router.get('/logout', UserController.logOut );
+
  
-});
 export default router;
