@@ -74,20 +74,18 @@ class UserController {
         const userRepository = getRepository(User);
         const user = await userRepository.findOneOrFail({ where: { email } });
 
-        switch (true) {
-            case (!user):                
-                res    
+        if (!user) {
+            return res
                 .status(400)
-                    .json({ message: `${email} is incorrect ` })
-                break;
-  
-            case (user.confirmation === true):                
-                res        
+                .json({ message: `${email} is incorrect `})
+        } else if (user.confirmation === true) {
+            return res
                 .status(400)
                 .json({ message: `${email} is already verified`})
-                break;            
-            default:                
-                try {
+
+        } else {
+            try {
+                
                 const tokens = await TokenPairs({ id: user.id });        
                 const token: any = tokens.accessToken
                 const url = `http://localhost:4000/api/users/confirmation/${token}`;
