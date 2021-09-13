@@ -14,7 +14,10 @@ import { getRepository } from 'typeorm';
 
 import { validate } from 'class-validator';
 
-import nodemailer from 'nodemailer';
+import {transport} from '@middlewares/Nodemailer/index'
+
+
+/* import nodemailer from 'nodemailer';
 
 const transport = nodemailer.createTransport({
   service: "Gmail",
@@ -22,7 +25,7 @@ const transport = nodemailer.createTransport({
     user: 'pakswim@gmail.com',
     pass: 'Moonstar@1987',
   },
-});
+}); */
 
 const cookieExtractor = function (req) {
   var token = null;
