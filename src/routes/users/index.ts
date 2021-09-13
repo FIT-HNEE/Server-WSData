@@ -24,7 +24,11 @@ router.get("/me", passport.authenticate("auth.jwt"), tokenHandler);
 
 router.get("/", passport.authenticate("scope.all"), tokenHandler)
 
+router.get('/forgotPassword', UserController.forgotPassword)
+
 router.put("/:id", passport.authenticate("scope.edit"), tokenHandler)
+
+router.put('/passwordChange/:token', UserController.changePassword)
 
 router.delete("/:id", passport.authenticate("scope.delete"), tokenHandler)
 
