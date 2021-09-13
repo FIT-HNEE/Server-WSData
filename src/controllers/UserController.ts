@@ -4,7 +4,8 @@ import { validate } from 'class-validator';
 import { User } from '../models/user';
 import jwt from 'jsonwebtoken'
 import { TokenPairs } from "@utils/jwt/jwt";
-import nodemailer from 'nodemailer';
+import {transport} from '@middlewares/Nodemailer/index'
+/* import nodemailer from 'nodemailer';
 
 const transport = nodemailer.createTransport({
   service: "Gmail",
@@ -12,7 +13,7 @@ const transport = nodemailer.createTransport({
     user: 'pakswim@gmail.com',
     pass: 'Moonstar@1987',
   },
-});
+}); */
 
 const {  JWT_ACCESS_SECRET } = process.env;
 
