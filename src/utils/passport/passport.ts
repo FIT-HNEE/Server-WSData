@@ -14,18 +14,7 @@ import { getRepository } from 'typeorm';
 
 import { validate } from 'class-validator';
 
-import {transport} from '@middlewares/Nodemailer/index'
-
-
-/* import nodemailer from 'nodemailer';
-
-const transport = nodemailer.createTransport({
-  service: "Gmail",
-  auth: {
-    user: 'pakswim@gmail.com',
-    pass: 'Moonstar@1987',
-  },
-}); */
+import sendMail from '@middlewares/Nodemailer/index'
 
 const cookieExtractor = function (req) {
   var token = null;
@@ -312,18 +301,10 @@ passport.use(
        /*  let decode = jwt.verify(token,JWT_ACCESS_SECRET )
         console.log('decode', (<any>decode).id)
         console.log('token', token) */
-         const url = `http://localhost:4000/api/users/confirmation/${token}`;
-
-        await transport.sendMail({
-          from: 'pakswim@gmail.com',
-          to: email,
-          subject: "Please confirm your account",
-          html: `<h1>Email Confirmation</h1>
-              <h2>Hello ${lastName}</h2>
-              <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
-              <a href="${url}"> ${url}</a>
-              </div>`,
-        })
+        const url = `http://localhost:4000/api/users/confirmation/${token}`;
+        const message = 'confirm your email'
+        await sendMail(email, user.lastName, url, message)
+        
        } catch (e) {
          console.log(e);
        }
