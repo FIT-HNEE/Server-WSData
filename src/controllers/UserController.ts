@@ -4,16 +4,7 @@ import { validate } from 'class-validator';
 import { User } from '../models/user';
 import jwt from 'jsonwebtoken'
 import { TokenPairs } from "@utils/jwt/jwt";
-import {transport} from '@middlewares/Nodemailer/index'
-/* import nodemailer from 'nodemailer';
-
-const transport = nodemailer.createTransport({
-  service: "Gmail",
-  auth: {
-    user: 'pakswim@gmail.com',
-    pass: 'Moonstar@1987',
-  },
-}); */
+import sendMail from '@middlewares/Nodemailer/index'
 
 const {  JWT_ACCESS_SECRET } = process.env;
 
@@ -70,6 +61,61 @@ class UserController {
         
     }
 
+    static changePassword = async (req: Request, res: Response) => {
+            
+
+        const decoded = jwt.verify(req.params.token, JWT_ACCESS_SECRET);        
+            
+        const id = await (<any>decoded).id        
+            
+        console.log('decoded_verification', id)        
+            
+        console.log('Token', req.params.token)
+        
+        if (id) {
+
+            try {
+
+                const { password } = req.body;
+                    
+                const userRepository = getRepository(User);
+            
+                const user = await userRepository.findOneOrFail(id);
+        
+                user.password = password;
+                
+                user.hashPassword();                
+            
+                console.log('user', user)                
+            
+                const errors = await validate(user);                
+            
+                if (errors.length > 0) {
+                
+                    res.send(errors);
+                    
+                    return;
+                    
+                }
+                
+                await userRepository.save(user);
+                            
+                res.send(user);
+                            
+            } catch (e) {
+                            
+                res.send('error');
+                            
+            }
+            
+        } else {
+            res.send('Id not matched')            
+        }
+            
+        //return res.redirect('http://localhost:3001/login');
+        
+    }
+
     static resendLink = async (req: Request, res: Response) => {
         const { email } = req.body
         const userRepository = getRepository(User);
@@ -90,21 +136,42 @@ class UserController {
                 const tokens = await TokenPairs({ id: user.id });        
                 const token: any = tokens.accessToken
                 const url = `http://localhost:4000/api/users/confirmation/${token}`;
+                const message = 'confirm your email'
+                await sendMail(email, user.lastName, url, message)
 
-                await transport.sendMail({
-                from: 'pakswim@gmail.com',
-                to: email,
-                subject: "Please confirm your account",
-                html: `<h1>Email Confirmation</h1>
-                    <h2>Hello ${user.lastName}</h2>
-                    <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
-                    <a href="${url}"> ${url}</a>
-                    </div>`,
-                })
                         return res
-                        .status(400)
+                        .status(200)
                         .json({ message: `Link to ${user.lastName} has been send`, User: user })
             } catch (e) {                
+                console.log(e);                
+            }           
+        }
+    }
+
+    static forgotPassword = async (req: Request, res: Response) => {
+        const { email } = req.body
+        const userRepository = getRepository(User);
+        const user = await userRepository.findOneOrFail({ where: { email } });
+
+        if (!user) {
+            return res
+                .status(400)
+                .json({ message: `${email} is incorrect `})
+        } else {
+            try {
+                
+                const tokens = await TokenPairs({ id: user.id });        
+                const token: any = tokens.accessToken
+                const url = `http://localhost:4000/api/users/passwordChange/${token}`;
+                const message = 'change your password'
+
+                await sendMail(email, user.lastName, url, message)
+
+                return res                            
+                    .status(200)                    
+                    .json({ message: `Link to ${user.lastName} has been send`, User: user })
+                
+            } catch (e) {  
                 console.log(e);                
             }           
         }
