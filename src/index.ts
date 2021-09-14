@@ -8,7 +8,7 @@ import helmet from "helmet";
 import cors from "cors";
 //import swaggerUi from "swagger-ui-express";
 //import swaggerDocument from '../doc/swagger.json'
-import dbConfig from './config/ormConfig';
+import dbConfig from '@config/ormConfig';
 import passport from '@utils/passport/passport';
 //import ApiError from "@middlewares/ErrorHandling/ApiError";
 //import errorHandler from '@middlewares/ErrorHandling/ErrorHandler';
