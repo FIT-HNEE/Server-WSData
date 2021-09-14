@@ -14,7 +14,7 @@ import { getRepository } from 'typeorm';
 
 import { validate } from 'class-validator';
 
-import sendMail from '@middlewares/Nodemailer/index'
+import sendMail from '@config/nodemailerConfig'
 
 const cookieExtractor = function (req) {
   var token = null;
