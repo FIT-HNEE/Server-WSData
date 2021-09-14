@@ -41,6 +41,9 @@
             ],
             "@middlewares/*": [
                 "middlewares/*"
+            ],
+            "@config/*": [
+                "config/*"
             ]
         }
     },
