@@ -65,7 +65,8 @@
     "start": "nodemon -r dotenv/config ./src/index.ts",
     "prod": "tsc && node ./build/index.js",
     "dev": "ts-node-dev -r dotenv/config  ./src",
-    "migration:run": "ts-node ./node_modules/typeorm/cli.js -f ./src/config/ormConfig.ts migration:run"
+    "migration:run": "ts-node ./node_modules/typeorm/cli.js -f ./src/config/ormConfig.ts migration:run",
+    "test": "jest --forceExit --detectOpenHandles --coverage --verbose"
   },
   "nodemonConfig": {
     "watch": [
