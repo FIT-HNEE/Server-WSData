@@ -6,15 +6,15 @@ import { Strategy as LocalStrategy } from "passport-local";
 
 import passport from "passport";
 
-import { TokenPairs } from "@utils/jwt/jwt";
+import { TokenPairs } from "../jwt/jwt";
 
-import { User } from "@models/user";
+import { User } from "../../models/user";
 
 import { getRepository } from 'typeorm';
 
 import { validate } from 'class-validator';
 
-import sendMail from '@config/nodemailerConfig'
+import sendMail from '../../config/nodemailerConfig'
 
 const cookieExtractor = function (req) {
   var token = null;

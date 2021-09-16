@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { getRepository } from 'typeorm';
 import { validate } from 'class-validator';
-import { User } from '@models/user';
+import { User } from '../models/user';
 import jwt from 'jsonwebtoken'
-import { TokenPairs } from "@utils/jwt/jwt";
-import sendMail from '@config/nodemailerConfig'
+import { TokenPairs } from "../utils/jwt/jwt";
+import sendMail from '../config/nodemailerConfig'
 
 const {  JWT_ACCESS_SECRET } = process.env;
 
