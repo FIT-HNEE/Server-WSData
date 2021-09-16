@@ -1,10 +1,28 @@
-const request = require('supertest')
+const request = require('supertest');
+const faker = require('faker');
 import ormConfig from '../../src/config/ormConfig';
 import { createConnection, getConnection, Connection } from "typeorm";
 
-describe('/api/users/auth', () => {
-    let server;    
-    beforeAll(async () => {      
+//let token;
+
+describe('Users route', () => {
+    let server;
+    const signup = '/api/users/register';
+    const signin = '/api/users/login';
+    const user = {
+        email: faker.internet.email(),        
+        password: faker.internet.password(),
+        firstName: faker.name.firstName(),    
+        lastName: faker.name.lastName(),                
+  };
+  const preSave = {
+    email: 'mr.sometest@gmail.com',
+      password: faker.internet.password(),
+    firstName: faker.name.firstName(),    
+        lastName: faker.name.lastName(),
+    };
+    
+    beforeAll(async () => { 
         const mod = await import('../../src/app');        
         server = (mod as any).default;
         let connection: Connection;
@@ -16,14 +34,79 @@ describe('/api/users/auth', () => {
         } catch (e) {
     // no connection created yet, nothing to get
             console.log(e)
-  }        
+        }
+        //let token;
+        const result = await request(server)
+            .post(signup)            
+            .send(preSave);        
+        expect(result.status).toBe(200);
+        //console.log('BeforeAll-signUP', result)
+        const user = result.body.user;
+        console.log('Here User',user)
     });
 
     afterAll(async () => {
         await getConnection().close();        
     });
+
+    //describe('signup', () => {
+    it('should crete new user if email not found', async () => {
+      try {
+        const result = await request(server)          
+            .post(signup)
+            .send(user);
+             // .send(user);          
+        expect(result.status).toBe(200);
+        expect(result.body).not.toBeNull;
+          expect(result.body).toHaveProperty('user');
+          //console.log('signUp', result.text)
+      } catch (error) {
+        console.log(error);
+      }
+    });
+        it('should return 403 if email was found', async () => {
+      try {
+        await request(server)
+          .post(signup)
+          .send(preSave);
+      } catch (error) {
+        expect(error.status).toBe(403);
+        expect(error.response.text).toEqual('{"error":"Email is already in use"}');
+      }
+    });
+    //});
     
-    it('should return 200', async () => {
+    //describe('signin', () => {
+    it('should return error 400 if user email and password empty', async () => {
+      let user = {};
+      try {
+        await request(server)
+          .post(signin)
+          .send(user);
+      } catch (error) {
+        expect(error.status).toEqual(400);
+      }
+    });
+
+    it('should return 200 and our token', async () => {
+      try {
+        const result = await request(server)
+          .post(signin)
+          .send(preSave);
+
+        expect(result.status).toEqual(200);
+        expect(result.body).not.toBeNull;
+          expect(result.body).toHaveProperty("tokens");
+         // console.log('Here', result);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+    //});
+    
+
+    
+    /* it('should return 200', async () => {
       
         const res = await request(server)        
             .post('/api/users/register')            
@@ -36,7 +119,8 @@ describe('/api/users/auth', () => {
         expect(res.status).toBe(200);        
         expect(res.type).toBe('application/json');        
         //console.log(res.text)        
-    });    
+    });     */
+    
 });
 
 
