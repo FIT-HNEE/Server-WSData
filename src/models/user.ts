@@ -21,9 +21,9 @@ export class User {
     @Column()
     lastName!: string;
 
-    @Column(/* , {
+    @Column({
         unique: true
-    } */)
+    })
     /* @IsNotEmpty() */
     email!: string;
 
@@ -34,7 +34,7 @@ export class User {
     @Column('boolean', {default: false})
     isAdmin: boolean;
 
-     @Column('boolean', {default: false})
+     @Column('boolean', {default: true})
     confirmation: boolean;
     
     @Column()
