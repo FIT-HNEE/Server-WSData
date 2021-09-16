@@ -1,34 +1,44 @@
-//const app = require('../../src/app') // Link to your server file
 const request = require('supertest')
+import ormConfig from '../../src/config/ormConfig';
+import { createConnection, getConnection, Connection } from "typeorm";
 
 describe('/api/users/auth', () => {
-  let server;
-  beforeAll(async () => {
-    const mod = await import('../../src/app');
-    server = (mod as any).default;
-  });
+    let server;    
+    beforeAll(async () => {      
+        const mod = await import('../../src/app');        
+        server = (mod as any).default;
+        let connection: Connection;
+        try {      
+            connection = await createConnection(ormConfig); 
+            if (!connection.isConnected) {
+                await connection.connect();
+            }            
+        } catch (e) {
+    // no connection created yet, nothing to get
+            console.log(e)
+  }        
+    });
 
-  /* afterAll((done) => {
-    if (server) {
-      server.close(done);
-    }
-  }); */
-
-  it('should return 500 TypeORMError', async () => {
-    const res = await request(server)
-      .post('/api/users/register')
-      .send({
-        email: 'mail@gmail.com',
-        password: 'validpassword123',
-        name: 'name',
-      });
-
-    expect(res.status).toBe(500);
-      //expect(res.body).toHaveProperty('errArray');
-      expect(res.type).toBe('text/html');
-      console.log(res.text)
-  });
+    afterAll(async () => {
+        await getConnection().close();        
+    });
+    
+    it('should return 200', async () => {
+      
+        const res = await request(server)        
+            .post('/api/users/register')            
+            .send({          
+                email: 'mail@gmail.com',                
+                password: 'validpassword123',        
+                firstName: 'firstName',
+                lastName: 'lastName',
+            });
+        expect(res.status).toBe(200);        
+        expect(res.type).toBe('application/json');        
+        //console.log(res.text)        
+    });    
 });
+
 
 
 
