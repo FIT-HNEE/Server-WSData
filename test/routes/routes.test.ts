@@ -17,9 +17,10 @@ describe('Users route', () => {
   };
   const preSave = {
     email: 'mr.sometest@gmail.com',
-      password: faker.internet.password(),
+    password: 'abcd',      
     firstName: faker.name.firstName(),    
-        lastName: faker.name.lastName(),
+    lastName: faker.name.lastName(),
+    confirmation: true        
     };
     
     beforeAll(async () => { 
