@@ -179,7 +179,7 @@ passport.use(
             done("Id is incorrect or authorization", null);
           } else {
             //Get values from the body
-            const { firstName, lastName, isAdmin, email, password } = req.body;           
+            const { firstName, lastName, isAdmin, email, password, confirmation } = req.body;           
             
             //Try to find user on database
             const userRepository = getRepository(User);            
@@ -187,7 +187,8 @@ passport.use(
               //Validate the new values on model
             user.firstName = firstName;            
             user.lastName = lastName;            
-            user.isAdmin = isAdmin;            
+            user.isAdmin = isAdmin;
+            user.confirmation = confirmation;
             user.email = email;            
             user.password = password;            
             if (password) {
