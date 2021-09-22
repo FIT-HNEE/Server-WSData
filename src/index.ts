@@ -1,15 +1,17 @@
 import { createConnection } from 'typeorm';
 import dbConfig from './config/ormConfig';
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT;
 import app from './app'
+import chalk from 'chalk';
 
 createConnection(dbConfig)
   .then((_connection) => {
     app.listen(PORT, () => {    
-      console.log("Server is running on port. 👍", PORT);      
+      console.log( chalk.blue(`🚀 Server is up and running on port ${PORT} 👍`)        
+      );
     });    
 })
   .catch((err) => {
-    console.log("Not Connected to DB 👎 :", err);
+    console.log( chalk.red(`❌ Server is not running due to error: ${err.message} `)),   
     process.exit(1)
   })
