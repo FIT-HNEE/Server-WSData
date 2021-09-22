@@ -3,12 +3,13 @@ const faker = require('faker');
 import ormConfig from '../../src/config/ormConfig';
 import { createConnection, getConnection, Connection } from "typeorm";
 
-//let token;
+let token;
 
 describe('Users route', () => {
     let server;
     const signup = '/api/users/register';
-    const signin = '/api/users/login';
+  const signin = '/api/users/login';
+  const getUsers = '/api/users'
     const user = {
         email: faker.internet.email(),        
         password: faker.internet.password(),
@@ -19,8 +20,8 @@ describe('Users route', () => {
     email: 'mr.sometest@gmail.com',
     password: 'abcd',      
     firstName: faker.name.firstName(),    
-    lastName: faker.name.lastName(),
-    confirmation: true        
+    lastName: faker.name.lastName(),    
+    isAdmin: true
     };
     
     beforeAll(async () => { 
@@ -36,14 +37,20 @@ describe('Users route', () => {
     // no connection created yet, nothing to get
             console.log(e)
         }
-        //let token;
+        
         const result = await request(server)
             .post(signup)            
             .send(preSave);        
         expect(result.status).toBe(200);
         //console.log('BeforeAll-signUP', result)
         const user = result.body.user;
-        console.log('Here User',user)
+      console.log('Here User', user)
+      const resp = await request(server)
+            .post(signin)            
+            .send(preSave);        
+        expect(resp.status).toBe(200);
+       token = resp.body.tokens.accessToken
+         console.log('BeforeAll Token', token);
     });
 
     afterAll(async () => {
@@ -97,30 +104,37 @@ describe('Users route', () => {
 
         expect(result.status).toEqual(200);
         expect(result.body).not.toBeNull;
-          expect(result.body).toHaveProperty("tokens");
-         // console.log('Here', result);
+        expect(result.body).toHaveProperty("tokens");
+        
       } catch (error) {
         console.log(error);
       }
     });
-    //});
     
-
-    
-    /* it('should return 200', async () => {
+  it('Should return all enteries', async () => {
+    try {
+      console.log('Here', token);
+       const response = await request(server)
+        .get(getUsers)
+        .set('Authorization', `Bearer ${token}`)
+      expect(response.statusCode).toBe(200);      
+      expect(response.type).toBe('application/json')
+      console.log('Users', response.body)
       
-        const res = await request(server)        
-            .post('/api/users/register')            
-            .send({          
-                email: 'mail@gmail.com',                
-                password: 'validpassword123',        
-                firstName: 'firstName',
-                lastName: 'lastName',
-            });
-        expect(res.status).toBe(200);        
-        expect(res.type).toBe('application/json');        
-        //console.log(res.text)        
-    });     */
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  it('Should required Authorization', async () => {
+    try {
+      const response = await request(server)
+        .get(getUsers)
+      expect(response.statusCode).toBe(401);
+    } catch (error) {
+      console.log(error)
+    }
+  })
     
 });
 
