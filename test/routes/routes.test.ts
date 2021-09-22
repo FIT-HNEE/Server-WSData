@@ -247,5 +247,22 @@ describe('Users route', () => {
     }
   })
 
+  //Delete route
+  //delete the data of user
+it('Should return the 200', async () => {
+    try {     
+      //console.log('ID', id)
+      const deleteUser = `/api/users/${id}`;
+      const response = await request(server)         
+        .delete(deleteUser)
+        .set('Authorization', `Bearer ${token}`)
+      
+      expect(response.statusCode).toBe(200);
+      
+    } catch (error) {
+      console.log(error)
+    }
+
+  })
 });
 
