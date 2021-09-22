@@ -176,7 +176,7 @@ passport.use(
           done("User is  not found!", null);
         } else {
           if (id !== req.params.id) {
-            done("You are not authorized for this process.", null);
+            done("Id is incorrect or authorization", null);
           } else {
             //Get values from the body
             const { firstName, lastName, isAdmin, email, password } = req.body;           
@@ -190,16 +190,18 @@ passport.use(
             user.isAdmin = isAdmin;            
             user.email = email;            
             user.password = password;            
-            user.hashPassword();
-            
-
+            if (password) {
+              user.hashPassword();
+            } 
             const errors = await validate(user);
             if (errors.length > 0) {
                 done(errors, null);
                 return;
             }
+            
             await userRepository.save(user);
-                done(null, user);
+            const updatedUser = await userRepository.findOneOrFail(user.id);
+            done(null, updatedUser);            
           }
         }
       } catch (error) {
