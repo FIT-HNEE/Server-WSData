@@ -1,0 +1,86 @@
+{
+	"openapi": "3.0.0",
+  "info": {
+    "title": "HNEE Project for Micro Weather Stations Data",
+    "description": "This is an API written in Typescript and features authentication and authorization",
+    "contact": {
+      "name": "API",
+      "email": "Hammad.Ali@hnee.de"
+    },
+    "version": "1.0.1"
+  },
+  "paths": {
+	  "/api/users/register": {
+      "post": {
+        "tags": ["authentication"],
+        "summary": "Creates a new user",
+        "requestBody": {
+          "description": "User information",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "New user record with ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/UserResponse"
+                    },
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+	  "schemas": {		  
+      "UserInput": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },          
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "isAdmin": {
+            "type": "boolean"
+          },
+          "confirmation": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        }
+      }
+	  }
+  }
+}
