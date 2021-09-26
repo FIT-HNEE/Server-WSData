@@ -372,11 +372,11 @@ passport.use(
         const url = `http://localhost:4000/api/users/confirmation/${token}`;
         const message = 'confirm your email'
         await sendMail(email, user.lastName, url, message)
-        
+        done(null, { user, emailLink:url });
        } catch (e) {
          console.log(e);
        }
-        done(null, { user });
+        
 
       } catch (error) {
 
