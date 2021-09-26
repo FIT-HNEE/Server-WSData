@@ -12,7 +12,7 @@
   "paths": {
 	  "/api/users/register": {
       "post": {
-        "tags": ["registration"],
+        "tags": ["Registration"],
         "summary": "Creates a new user",
         "requestBody": {
           "description": "User information",
@@ -59,7 +59,7 @@
     },
     "/api/users/login": {
       "post": {
-        "tags": ["authentication"],
+        "tags": ["Authentication"],
         "summary": "Authenticates user and generates new JWT auth token",
         "requestBody": {
           "description": "User login credentials",
@@ -97,7 +97,7 @@
     },
     "/api/users": {
       "get": {
-        "tags": ["users"],
+        "tags": ["Users"],
         "summary": "Returns list of users",
         "security": [
           {"bearerAuth": []}
@@ -131,7 +131,7 @@
     },
     "/api/users/me": {
       "get": {
-        "tags": ["users"],
+        "tags": ["Users"],
         "summary": "Returns a user if exists",
         "security": [
           {"bearerAuth": []}
@@ -162,7 +162,7 @@
     },
     "/api/users/{id}": {     
       "put": {
-        "tags": ["users"],
+        "tags": ["Users"],
         "summary": "Updates a user profile with admin role only",
         "security": [
           {"bearerAuth": []}
@@ -212,7 +212,7 @@
         }
       },
       "delete": {
-        "tags": ["users"],
+        "tags": ["Users"],
         "summary": "Deletes user if exists",
         "security": [
           {"bearerAuth": []}
@@ -247,7 +247,7 @@
     },
     "/api/users/me/{id}": {     
       "put": {
-        "tags": ["users"],
+        "tags": ["Users"],
         "summary": "Updates own profile",
         "security": [
           {"bearerAuth": []}
@@ -299,7 +299,7 @@
     },
     "/api/users/confirmation/{token}": {     
       "get": {
-        "tags": ["registration"],
+        "tags": ["Registration"],
         "summary": "Confirmation through email using token",
         
         "parameters": [
@@ -339,7 +339,7 @@
     },
     "/api/users/email/resend": {
       "post": {
-        "tags": ["registration"],
+        "tags": ["Registration"],
         "summary": "Email Resend in case email not delivered",
         "requestBody": {
           "description": "User Email",
@@ -353,7 +353,7 @@
         },
         "responses": {
           "200": {
-            "description": "New user record with ID",
+            "description": "Email Link for confirmation",
             "content": {
               "application/json": {
                 "schema": {
@@ -377,6 +377,102 @@
                       "$ref": "#/components/schemas/ErrorResponse"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/forgotPassword": {
+      "post": {
+        "tags": ["Password Reset"],
+        "summary": "Email Resend for password reset",
+        "requestBody": {
+          "description": "User Email",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailResend"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email Link for password reset",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "EmailLink": {
+                      "$ref": "#/components/schemas/EmailResendResponse"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {                  
+                  "properties": {
+                    "Error": {
+                      "$ref": "#/components/schemas/ErrorResponse"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/passwordChange/{token}": {     
+      "put": {
+        "tags": ["Password Reset"],
+        "summary": "Password Reset through email using token",
+        "requestBody": {
+          "description": "New Password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewPassword"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "Token required for Password Reset",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],        
+        "responses": {
+          "200": {
+            "description": "Password Reset",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -471,6 +567,14 @@
         "type": "object",
         "properties": {
           "emailLink": {
+            "type": "string"
+          }
+        }
+      },
+      "NewPassword": {
+        "type": "object",
+        "properties": {          
+          "password": {
             "type": "string"
           }
         }
