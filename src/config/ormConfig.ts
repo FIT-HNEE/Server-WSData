@@ -9,7 +9,7 @@ const config: ConnectionOptions = {
     database: process.env.POSTGRES_DB || "climatic-data-project",
     entities: [User],
     synchronize: true,
-    dropSchema: true,
+    dropSchema: false,
     //migrationsRun: true,
     cli: {
         migrationsDir: 'src/migration',
