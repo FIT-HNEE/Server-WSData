@@ -296,6 +296,93 @@
           }
         }
       }
+    },
+    "/api/users/confirmation/{token}": {     
+      "get": {
+        "tags": ["registration"],
+        "summary": "Confirmation through email using token",
+        
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "Token required for verification from Email Link",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],        
+        "responses": {
+          "200": {
+            "description": "Email Confirmed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/email/resend": {
+      "post": {
+        "tags": ["registration"],
+        "summary": "Email Resend in case email not delivered",
+        "requestBody": {
+          "description": "User Email",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailResend"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "New user record with ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "EmailLink": {
+                      "$ref": "#/components/schemas/EmailResendResponse"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {                  
+                  "properties": {
+                    "Error": {
+                      "$ref": "#/components/schemas/ErrorResponse"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
     
   },
@@ -320,10 +407,12 @@
             "type": "string"
           },
           "isAdmin": {
-            "type": "boolean"
+            "type": "boolean",
+            "default": false
           },
           "confirmation": {
-            "type": "boolean"
+            "type": "boolean",
+            "default": false
           },
           "createdAt": {
             "type": "string"
@@ -366,6 +455,22 @@
             "type": "string"
           },
           "password": {
+            "type": "string"
+          }
+        }
+      },
+      "EmailResend": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "EmailResendResponse": {
+        "type": "object",
+        "properties": {
+          "emailLink": {
             "type": "string"
           }
         }
