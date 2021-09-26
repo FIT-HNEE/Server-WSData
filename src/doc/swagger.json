@@ -47,9 +47,47 @@
                 "schema": {                  
                   "properties": {
                     "Error": {
-                      "$ref": "#/components/schemas/Error"
+                      "$ref": "#/components/schemas/ErrorResponse"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/login": {
+      "post": {
+        "tags": ["authentication"],
+        "summary": "Authenticates user and generates new JWT auth token",
+        "requestBody": {
+          "description": "User login credentials",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User record and JWT auth token that expires in 1 hour",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -92,7 +130,47 @@
           }
         }
       },
-      "Error":{
+      "UserLogin": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },      
+      "LoginResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "message"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/User"
+          },
+          "tokens":{
+            "type": "object",
+            "properties": {
+              "accessToken":{
+                "type": "string"
+              },
+              "refreshToken":{
+                "type": "string"
+              }
+            }
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "ErrorResponse":{
          "type": "object",
         "required": [
           "message",
