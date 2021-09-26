@@ -34,7 +34,7 @@ export class User {
     @Column('boolean', {default: false})
     isAdmin: boolean;
 
-     @Column('boolean', {default: true})
+     @Column('boolean', {default: false})
     confirmation: boolean;
     
     @Column()
