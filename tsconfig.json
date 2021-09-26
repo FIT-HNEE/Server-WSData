@@ -12,6 +12,7 @@
         "esModuleInterop": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
+        "resolveJsonModule": true,
         "noImplicitReturns": false,
         "noFallthroughCasesInSwitch": true,
         "traceResolution": false,
@@ -29,7 +30,7 @@
             "node_modules/@types",
             "src/types"
         ],
-        "baseUrl": "./src",
+        "baseUrl": "./",
         "paths": {
             "@utils/*": [
                 "utils/*"
