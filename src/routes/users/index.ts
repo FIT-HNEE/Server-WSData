@@ -4,8 +4,6 @@ import passport from "../../utils/passport/passport";
 
 import tokenHandler from "../../middlewares/TokenHandler/TokenHandler";
 
-//import ApiError from '../middlewares/ErrorHandling/ApiError';
-
 import UserController from '../../controllers/UserController'
 
 const router = express.Router();
@@ -26,7 +24,9 @@ router.get("/", passport.authenticate("scope.all"), tokenHandler)
 
 router.get('/forgotPassword', UserController.forgotPassword)
 
-router.put("/:id", passport.authenticate("scope.edit"), tokenHandler)
+router.put("/:id", passport.authenticate("scope.editUser"), tokenHandler)
+
+router.put("/me/:id", passport.authenticate("scope.edit"), tokenHandler)
 
 router.put('/passwordChange/:token', UserController.changePassword)
 
