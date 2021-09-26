@@ -146,7 +146,7 @@ passport.use(
   )
 );
 
-// Edit user information
+// Edit own information
 passport.use(
   "scope.edit",
   new JwtStrategy(
@@ -179,11 +179,76 @@ passport.use(
             done("Id is incorrect or authorization", null);
           } else {
             //Get values from the body
-            const { firstName, lastName, isAdmin, email, password, confirmation } = req.body;           
+            const { firstName, lastName, isAdmin, email, password } = req.body;           
             
             //Try to find user on database
             const userRepository = getRepository(User);            
             const user = await userRepository.findOneOrFail(id)            
+              //Validate the new values on model
+            user.firstName = firstName;            
+            user.lastName = lastName;            
+            user.isAdmin = isAdmin;
+            user.email = email;            
+            user.password = password;            
+            if (password) {
+              user.hashPassword();
+            } 
+            const errors = await validate(user);
+            if (errors.length > 0) {
+                done(errors, null);
+                return;
+            }
+            
+            await userRepository.save(user);
+            const updatedUser = await userRepository.findOneOrFail(user.id);
+            done(null, updatedUser);            
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        done("Bearer service is not available", null);
+      }
+    }
+  )
+);
+
+// Edit user information
+passport.use(
+  "scope.editUser",
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        cookieExtractor,
+      ]),
+      secretOrKey: JWT_ACCESS_SECRET,
+      issuer: JWT_ISSUER,
+      audience: JWT_AUDIENCE,
+      passReqToCallback: true,
+    },
+    
+    async function (req, jwt_payload, done) {
+      
+      try {
+        const { id } = jwt_payload;
+        //let params: any = req.params
+        console.log('jwt_payload',jwt_payload)
+        const userRepository = getRepository(User);
+        const userAdmin = await userRepository.findOneOrFail(id);
+        
+        //console.log('user', user)
+        //console.log('jwt_payload id', typeof id)
+        //console.log('req.params.id id', typeof req.params.id)
+        if (userAdmin.isAdmin !== true ) {
+          done("Admin role is required!", null);
+        } else {
+          let userId = req.params.id
+            //Get values from the body
+            const { firstName, lastName, isAdmin, email, password, confirmation } = req.body;           
+            
+            //Try to find user on database
+            const userRepository = getRepository(User);            
+            const user = await userRepository.findOneOrFail({id:userId})            
               //Validate the new values on model
             user.firstName = firstName;            
             user.lastName = lastName;            
@@ -204,7 +269,7 @@ passport.use(
             const updatedUser = await userRepository.findOneOrFail(user.id);
             done(null, updatedUser);            
           }
-        }
+        
       } catch (error) {
         console.log(error);
         done("Bearer service is not available", null);
