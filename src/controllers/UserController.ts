@@ -100,7 +100,11 @@ class UserController {
                 
                 await userRepository.save(user);
                             
-                res.send(user);
+                
+                    res
+                        .status(200)
+                        .json({ message: `Password of ${user.email} has been changed`, User: user })
+                    
                             
             } catch (e) {
                             
@@ -141,7 +145,7 @@ class UserController {
 
                         return res
                         .status(200)
-                        .json({ message: `Link to ${user.lastName} has been send`, User: user })
+                        .json({ message: `Link to ${user.lastName} has been send`, User: user, EmailLink:url  })
             } catch (e) {                
                 console.log(e);                
             }           
@@ -169,7 +173,7 @@ class UserController {
 
                 return res                            
                     .status(200)                    
-                    .json({ message: `Link to ${user.lastName} has been send`, User: user })
+                    .json({ message: `Link to ${user.lastName} has been send for password change`, User: user, EmailLink:url })
                 
             } catch (e) {  
                 console.log(e);                
