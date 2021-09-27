@@ -189,6 +189,8 @@ class UserController {
             await res.clearCookie("accessToken");    
             await res.clearCookie("refreshToken");    
             //await req.logout();   
+            /* response.setHeader('Set-Cookie', ['Authorization=;Max-age=0']);
+            response.send(200); */
         
         //res.redirect('/');
             res.status(200).json({    
