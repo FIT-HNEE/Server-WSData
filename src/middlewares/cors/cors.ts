@@ -1,7 +1,8 @@
 import cors from 'cors';
-const { CORS_WHITE_LIST } = process.env;
-const whiteList =
-  typeof CORS_WHITE_LIST === 'string' ? CORS_WHITE_LIST.split(',') : [];
+//const { CORS_WHITE_LIST } = process.env;
+const whiteList = ["http://localhost:3000", "http://localhost:4000/api/users/me"];
+/* const whiteList =
+  typeof CORS_WHITE_LIST === 'string' ? CORS_WHITE_LIST.split(',') : []; */
 const options: cors.CorsOptions = {
   allowedHeaders: [
     'Origin',
