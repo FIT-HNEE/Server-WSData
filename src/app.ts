@@ -5,8 +5,8 @@ import express, { Application } from 'express';
 import morgan from "morgan";
 import Routes from './routes';
 import helmet from "helmet";
-import cors from "./middlewares/cors/cors";
-//import cors from 'cors'
+//import cors from "./middlewares/cors/cors";
+import cors from 'cors'
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from './doc/swagger.json'
 import passport from './utils/passport/passport';
@@ -15,8 +15,18 @@ import passport from './utils/passport/passport';
 
 
 const app: Application = express();
-
-app.use(cors())
+const whitelist = ["http://localhost:3000", "http://localhost:3001"];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+app.use(cors(corsOptions))
 app.use(cookieParser());
 
 app.use(express.json());
