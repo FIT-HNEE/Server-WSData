@@ -1,6 +1,6 @@
 import cors from 'cors';
 //const { CORS_WHITE_LIST } = process.env;
-const whiteList = ["http://localhost:3000", "http://localhost:4000/api/users/me"];
+const whiteList = ["http://localhost:3000", "http://localhost:3000/"];
 /* const whiteList =
   typeof CORS_WHITE_LIST === 'string' ? CORS_WHITE_LIST.split(',') : []; */
 const options: cors.CorsOptions = {
@@ -10,8 +10,11 @@ const options: cors.CorsOptions = {
     'Content-Type',
     'Accept',
     'X-Access-Token',
+    'Access-Control-Allow-Methods',
+    'Access-Control-Allow-Headers',    
   ],
   credentials: true,
+  preflightContinue: false,
   methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
   origin: (
     origin: string | undefined,
@@ -22,8 +25,7 @@ const options: cors.CorsOptions = {
     } else {
       callback(new Error(`Your access has been blocked by CORS.`));
     }
-  },
-  preflightContinue: false,
+  },  
 };
 
 export default () => cors(options);
