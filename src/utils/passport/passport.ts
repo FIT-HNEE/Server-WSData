@@ -14,31 +14,26 @@ import { validate } from 'class-validator';
 
 import sendMail from '../../config/nodemailerConfig'
 
-import {Request} from 'express'
+import { Request, Response } from 'express'
 
-const cookieExtractor = function (req: Request) {
-  var token = null;
-  if (req && req.cookies) {
-    token = req.cookies["accessToken"];
-  }
-  return token;
-};
 const { JWT_ISSUER, JWT_AUDIENCE, JWT_ACCESS_SECRET } = process.env;
 
 //JwtStrategy for own access
+
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
+  secretOrKey: JWT_ACCESS_SECRET,
+  issuer: JWT_ISSUER,      
+  audience: JWT_AUDIENCE,
+  passReqToCallback: true,
+};
+
+
 passport.use(
   "auth.jwt",
   new JwtStrategy(
-    {
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        //ExtractJwt.fromAuthHeaderAsBearerToken(),
-        cookieExtractor,
-      ]),
-      secretOrKey: JWT_ACCESS_SECRET,
-      issuer: JWT_ISSUER,
-      audience: JWT_AUDIENCE,
-    },
-    async function (jwt_payload, done) {
+    opts,
+    async function (_req, jwt_payload, done) {
       try {
         const { id } = jwt_payload;
         const userRepository = getRepository(User);
@@ -59,17 +54,7 @@ passport.use(
 passport.use(
   "scope.all",
   new JwtStrategy(
-    {
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        //ExtractJwt.fromAuthHeaderAsBearerToken(),
-        cookieExtractor,
-      ]),
-      secretOrKey: JWT_ACCESS_SECRET,
-      issuer: JWT_ISSUER,
-      audience: JWT_AUDIENCE,
-      passReqToCallback: true,
-    },
-    
+    opts,    
     async function (_req, jwt_payload, done) {
       
       try {
@@ -105,17 +90,7 @@ passport.use(
 passport.use(
   "scope.delete",
   new JwtStrategy(
-    {
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        //ExtractJwt.fromAuthHeaderAsBearerToken(),
-        cookieExtractor,
-      ]),
-      secretOrKey: JWT_ACCESS_SECRET,
-      issuer: JWT_ISSUER,
-      audience: JWT_AUDIENCE,
-      passReqToCallback: true,
-    },
-    
+    opts,    
     async function (req, jwt_payload, done) {
       
       try {
@@ -150,17 +125,7 @@ passport.use(
 passport.use(
   "scope.edit",
   new JwtStrategy(
-    {
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        //ExtractJwt.fromAuthHeaderAsBearerToken(),
-        cookieExtractor,
-      ]),
-      secretOrKey: JWT_ACCESS_SECRET,
-      issuer: JWT_ISSUER,
-      audience: JWT_AUDIENCE,
-      passReqToCallback: true,
-    },
-    
+    opts,    
     async function (req, jwt_payload, done) {
       
       try {
@@ -216,19 +181,8 @@ passport.use(
 passport.use(
   "scope.editUser",
   new JwtStrategy(
-    {
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        //ExtractJwt.fromAuthHeaderAsBearerToken(),
-        cookieExtractor,
-      ]),
-      secretOrKey: JWT_ACCESS_SECRET,
-      issuer: JWT_ISSUER,
-      audience: JWT_AUDIENCE,
-      passReqToCallback: true,
-    },
-    
-    async function (req, jwt_payload, done) {
-      
+    opts,    
+    async function (req, jwt_payload, done) {      
       try {
         const { id } = jwt_payload;
         //let params: any = req.params
@@ -273,6 +227,50 @@ passport.use(
       } catch (error) {
         console.log(error);
         done("Bearer service is not available", null);
+      }
+    }
+  )
+);
+
+//Log in local strategy
+passport.use(
+  "auth.login",
+  new LocalStrategy(
+    { usernameField: "email", passReqToCallback: true },
+    
+    async function (req: Request ,_email, res: Response, done) {
+      try {
+        const { email, password } = req.body;
+       
+        const userRepository = getRepository(User);
+        let user = await userRepository.findOneOrFail({ where: { email } });
+        //console.log('user', user)
+        //console.log('password', password)
+        //console.log('User password', user.password)  
+         //Validate if the parameters are ok
+        const errors = await validate(user);
+        if (errors.length > 0) {
+            res.status(400).send(errors);
+            return;
+        }
+
+        if (user.confirmation !== false) {
+          if (user.checkIfUnencryptedPasswordIsValid(password)) {
+         
+          const tokens = await TokenPairs({ id: user.id });
+          console.log('tokens',tokens )
+
+          done(null, { user, tokens });
+        } else {
+          done("User not found.", null);
+        }
+        } else {
+          done('Please confirm your account', null)
+        }
+
+        
+      } catch (error) {
+        done(error, null);
       }
     }
   )
