@@ -1,5 +1,3 @@
-import {Request, Response} from 'express'
-
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 
 import { Strategy as LocalStrategy } from "passport-local";
@@ -16,7 +14,9 @@ import { validate } from 'class-validator';
 
 import sendMail from '../../config/nodemailerConfig'
 
-const cookieExtractor = function (req) {
+import {Request} from 'express'
+
+const cookieExtractor = function (req: Request) {
   var token = null;
   if (req && req.cookies) {
     token = req.cookies["accessToken"];
@@ -31,7 +31,7 @@ passport.use(
   new JwtStrategy(
     {
       jwtFromRequest: ExtractJwt.fromExtractors([
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        //ExtractJwt.fromAuthHeaderAsBearerToken(),
         cookieExtractor,
       ]),
       secretOrKey: JWT_ACCESS_SECRET,
@@ -61,7 +61,7 @@ passport.use(
   new JwtStrategy(
     {
       jwtFromRequest: ExtractJwt.fromExtractors([
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        //ExtractJwt.fromAuthHeaderAsBearerToken(),
         cookieExtractor,
       ]),
       secretOrKey: JWT_ACCESS_SECRET,
@@ -107,7 +107,7 @@ passport.use(
   new JwtStrategy(
     {
       jwtFromRequest: ExtractJwt.fromExtractors([
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        //ExtractJwt.fromAuthHeaderAsBearerToken(),
         cookieExtractor,
       ]),
       secretOrKey: JWT_ACCESS_SECRET,
@@ -152,7 +152,7 @@ passport.use(
   new JwtStrategy(
     {
       jwtFromRequest: ExtractJwt.fromExtractors([
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        //ExtractJwt.fromAuthHeaderAsBearerToken(),
         cookieExtractor,
       ]),
       secretOrKey: JWT_ACCESS_SECRET,
@@ -218,7 +218,7 @@ passport.use(
   new JwtStrategy(
     {
       jwtFromRequest: ExtractJwt.fromExtractors([
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        //ExtractJwt.fromAuthHeaderAsBearerToken(),
         cookieExtractor,
       ]),
       secretOrKey: JWT_ACCESS_SECRET,
@@ -278,50 +278,6 @@ passport.use(
   )
 );
 
-//Log in local strategy
-passport.use(
-  "auth.login",
-  new LocalStrategy(
-    { usernameField: "email", passReqToCallback: true, session: false },
-    
-    async function (req: Request ,_email, res: Response, done) {
-      try {
-        const { email, password } = req.body;
-       
-        const userRepository = getRepository(User);
-        let user = await userRepository.findOneOrFail({ where: { email } });
-        //console.log('user', user)
-        //console.log('password', password)
-        //console.log('User password', user.password)  
-         //Validate if the parameters are ok
-        const errors = await validate(user);
-        if (errors.length > 0) {
-            res.status(400).send(errors);
-            return;
-        }
-
-        if (user.confirmation !== false) {
-          if (user.checkIfUnencryptedPasswordIsValid(password)) {
-         
-          const tokens = await TokenPairs({ id: user.id });
-          console.log('tokens',tokens )
-
-          done(null, { user, tokens });
-        } else {
-          done("User not found.", null);
-        }
-        } else {
-          done('Please confirm your account', null)
-        }
-
-        
-      } catch (error) {
-        done(error, null);
-      }
-    }
-  )
-);
-
 //Register local strategy
 passport.use(
   "auth.register",
@@ -375,8 +331,7 @@ passport.use(
         done(null, { user, emailLink:url });
        } catch (e) {
          console.log(e);
-       }
-        
+       }       
 
       } catch (error) {
 
