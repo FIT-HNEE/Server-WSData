@@ -181,73 +181,12 @@ class UserController {
         }
     }
 
-    static login = async (req: Request, res: Response, next) => {
-        try {
-
-             const { email, password } = req.body;
-       
-        const userRepository = getRepository(User);
-        let user = await userRepository.findOneOrFail({ where: { email } });
-        //console.log('user', user)
-        //console.log('password', password)
-        //console.log('User password', user.password)  
-         //Validate if the parameters are ok
-        const errors = await validate(user);
-        if (errors.length > 0) {
-            res.status(400).send(errors);
-            return;
-        }
-
-        if (user.confirmation !== false) {
-          if (user.checkIfUnencryptedPasswordIsValid(password)) {
-         
-          const tokens = await TokenPairs({ id: user.id });
-              console.log('tokens', tokens)
-              res.cookie("accessToken", tokens.accessToken, {
-              httpOnly: true,              
-              path: "/",      
-              //sameSite: "none",      
-              secure: false,      
-            })
-            
-            res.cookie("refreshToken", tokens.refreshToken, {      
-              httpOnly: true,              
-              path: "/",      
-              //sameSite: "none",      
-              secure: false,      
-            });
-              
-              res.status(200).json({    
-            status: 'OK', tokens      
-            })
     
-
-          //done(null, { user, tokens });
-          } else {
-              res.json('password not match')
-        }
-        } else {
-            res.json('user not confirmed')
-    }
-        
-            } catch (error) {
-                next(error)
-            }
-
-    }    
-
-
     static logOut = async (_req: Request, res: Response, next) => {
         try {
     
-            // clear cookie when logging out
-            await res.clearCookie("accessToken");    
-            await res.clearCookie("refreshToken");    
-            //await req.logout();   
-            /* response.setHeader('Set-Cookie', ['Authorization=;Max-age=0']);
-            response.send(200); */
-        
-        //res.redirect('/');
+    
+        res.redirect('/');
             res.status(200).json({    
             status: 'Bye!'      
             });
