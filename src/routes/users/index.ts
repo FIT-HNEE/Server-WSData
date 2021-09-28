@@ -16,7 +16,7 @@ router.get('/confirmation/:token', UserController.activateAcount)
 
 router.post('/email/resend', UserController.resendLink)
 
-router.post("/login", passport.authenticate("auth.login"), tokenHandler);
+router.post("/login", UserController.login, tokenHandler);
 
 router.get("/me", passport.authenticate("auth.jwt"), tokenHandler);
 
