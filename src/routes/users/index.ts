@@ -22,6 +22,8 @@ router.get("/me", passport.authenticate("auth.jwt"), tokenHandler);
 
 router.get("/", passport.authenticate("scope.all"), tokenHandler)
 
+router.post("/search", passport.authenticate("scope.search"), tokenHandler)
+
 router.post('/forgotPassword', UserController.forgotPassword)
 
 router.put("/:id", passport.authenticate("scope.editUser"), tokenHandler)
@@ -32,7 +34,4 @@ router.put('/passwordChange/:token', UserController.changePassword)
 
 router.delete("/:id", passport.authenticate("scope.delete"), tokenHandler)
 
-router.get('/logout', UserController.logOut );
-
- 
 export default router;
