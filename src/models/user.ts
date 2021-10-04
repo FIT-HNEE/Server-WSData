@@ -15,10 +15,10 @@ export class User {
     @PrimaryGeneratedColumn("uuid")
     id!: string;
 
-    @Column()
+    @Column({name:"firstname"})
     firstName!: string;
 
-    @Column()
+    @Column({name:"lastname"})
     lastName!: string;
 
     @Column({
@@ -31,7 +31,7 @@ export class User {
    /*  @Length(3, 100) */
     password!: string;    
     
-    @Column('boolean', {default: false})
+    @Column('boolean', {default: false, name:"isadmin"})
     isAdmin: boolean;
 
      @Column('boolean', {default: false})
