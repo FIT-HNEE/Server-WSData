@@ -179,23 +179,8 @@ class UserController {
                 console.log(e);                
             }           
         }
-    }
-
-    
-    static logOut = async (_req: Request, res: Response, next) => {
-        try {
-    
-    
-        res.redirect('/');
-            res.status(200).json({    
-            status: 'Bye!'      
-            });
-    
-            } catch (error) {
-                next(error)
-            }
-
-    }    
+    }   
+        
 }
 
 export default UserController; 
