@@ -479,6 +479,58 @@
           }
         }
       }
+    },
+    "/api/users/search": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Search results from the database",
+        "security": [
+          {"bearerAuth": []}
+        ],
+        "requestBody": {
+          "description": "email, or first name or last name",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSearch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Users data availible in the database for the requested search",
+            "content": {
+              "application/json": {                
+                "schema": {
+                  "type": "array",
+                  "properties": {
+                    "users":{
+                     "type": "array",
+                     "items":{
+                       "$ref": "#/components/schemas/User"
+                     }
+                    },
+                    "total": {
+                      "type": "number"
+                    }
+                  }                  
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
     
   },
@@ -589,6 +641,20 @@
           }
         }
       },
+      "UserSearch": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          }
+        }
+      },
       "EmailResend": {
         "type": "object",
         "properties": {
@@ -612,7 +678,8 @@
             "type": "string"
           }
         }
-      },      
+      }, 
+           
       "LoginResponse": {
         "type": "object",
         "required": [
@@ -653,7 +720,7 @@
             "$ref": "#/components/schemas/User"
           }
         }
-      },
+      },           
       "ErrorResponse":{
          "type": "object",
         "required": [
