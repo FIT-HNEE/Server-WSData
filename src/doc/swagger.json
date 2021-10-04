@@ -479,30 +479,6 @@
           }
         }
       }
-    },
-    "/api/users/logout": {
-      "get": {
-        "tags": ["Authentication"],
-        "summary": "Removing token from cookies",
-        "security": [
-          {"bearerAuth": []}
-        ],
-        "responses": {
-          "200": {
-            "description": "Logout Success"            
-          },
-          "default": {
-            "description": "Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
     }
     
   },
