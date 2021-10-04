@@ -21,7 +21,8 @@ const { JWT_ISSUER, JWT_AUDIENCE, JWT_ACCESS_SECRET } = process.env;
 //JwtStrategy for own access
 
 const opts = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
+  //jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
+  jwtFromRequest: ExtractJwt.fromExtractors([ExtractJwt.fromAuthHeaderWithScheme("JWT"), ExtractJwt.fromHeader("JWT"), ExtractJwt.fromAuthHeaderAsBearerToken()]),
   secretOrKey: JWT_ACCESS_SECRET,
   issuer: JWT_ISSUER,      
   audience: JWT_AUDIENCE,
@@ -44,7 +45,7 @@ passport.use(
         done(null, user);
       } catch (error) {
         console.log(error);
-        done("Bearer service is not available", null);
+        done(`Something went wrong: ${error} `, null);
       }
     }
   )
@@ -71,7 +72,7 @@ passport.use(
         } else {
           if (user.isAdmin === true) {
            const users = await userRepository.find({
-            select: ["id", "firstName", "lastName", "email", "isAdmin"]
+            select: ["id", "firstName", "lastName", "email", "isAdmin", "confirmation", "createdAt"]
            })
             done(null, users);
           } else {
@@ -80,12 +81,53 @@ passport.use(
         }
       } catch (error) {
         console.log(error);
-        done("Bearer service is not available", null);
+        done(`Something went wrong: ${error} `, null);
       }
     }
   )
 );
 
+// Search for last name and first name 
+passport.use(
+  "scope.search",
+  new JwtStrategy(
+    opts,    
+    async function (req, jwt_payload, done) {
+      
+      try {
+        const { id } = jwt_payload;
+        //let params: any = req.params
+        //console.log('jwt_payload',jwt_payload)
+        const userRepository = getRepository(User);
+        const user = await userRepository.findOneOrFail(id);
+        //console.log('user', user)
+        //console.log('jwt_payload id', typeof id)
+        //console.log('req.params.id id', typeof req.params.id)
+        if (!user) {
+          done("User is  not found!", null);
+        } else {
+          if (user.isAdmin === true) {
+            const firstName = req.body.firstName
+            const lastName = req.body.lastName
+             const email = req.body.email
+            const data = await userRepository.findAndCount({
+             where: `(firstName like '%${firstName}%' or lastName like '%${lastName}%' 
+       or email like '%${email}%')`
+            })
+            //console.log('data', data)
+            done(null, data);
+          } else {
+            done('Not Admin', null);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        
+        done(`Something went wrong: ${error} `, null);
+      }
+    }
+  )
+);
 //User delete option only by admin role.
 passport.use(
   "scope.delete",
@@ -115,7 +157,7 @@ passport.use(
         }
       } catch (error) {
         console.log(error);
-        done("Bearer service is not available", null);
+        done(`Something went wrong: ${error} `, null);
       }
     }
   )
@@ -171,7 +213,7 @@ passport.use(
         }
       } catch (error) {
         console.log(error);
-        done("Bearer service is not available", null);
+        done(`Something went wrong: ${error} `, null);
       }
     }
   )
@@ -226,7 +268,7 @@ passport.use(
         
       } catch (error) {
         console.log(error);
-        done("Bearer service is not available", null);
+        done(`Something went wrong: ${error} `, null);
       }
     }
   )
