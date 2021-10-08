@@ -12,11 +12,12 @@ import { getRepository } from 'typeorm';
 
 import { validate } from 'class-validator';
 
-import sendMail from '../../config/nodemailerConfig'
+import sendMail from '../../config/nodemailerConfig';
 
-import { Request, Response } from 'express'
+import { Request, Response } from 'express';
 
 const { JWT_ISSUER, JWT_AUDIENCE, JWT_ACCESS_SECRET } = process.env;
+
 
 //JwtStrategy for own access
 
@@ -299,8 +300,14 @@ passport.use(
         if (user.confirmation !== false) {
           if (user.checkIfUnencryptedPasswordIsValid(password)) {
          
-          const tokens = await TokenPairs({ id: user.id });
-          console.log('tokens',tokens )
+            const tokens = await TokenPairs({ id: user.id });
+
+            user.date = new Date()
+            
+            await userRepository.save(user);
+            
+            console.log('tokens', tokens)
+            
 
           done(null, { user, tokens });
         } else {
@@ -329,7 +336,7 @@ passport.use(
           //Get parameters from the body
         let { firstName, lastName, isAdmin, email, password } = req.body;
         
-        let user = new User();
+        let user = await new User();
         
         user.firstName = firstName;
         
@@ -338,12 +345,14 @@ passport.use(
         user.isAdmin = isAdmin;
         
         user.email = email;
+
+        user.date = new Date()
         
         user.password = password
         
-        user.hashPassword();
-        
-        const userRepository = getRepository(User);
+        user.hashPassword();   
+
+        const userRepository = await getRepository(User);
         
         await userRepository.save(user);
         
