@@ -5,10 +5,145 @@ import { User } from '../models/user';
 import jwt from 'jsonwebtoken'
 import { TokenPairs } from "../utils/jwt/jwt";
 import sendMail from '../config/nodemailerConfig'
-
+import moment from 'moment'
 const {  JWT_ACCESS_SECRET } = process.env;
 
 class UserController {
+
+    static sendReminder = async () => {
+
+    //console.log(`now: ${new Date()}`);
+    ///The Main Function 
+    const userRepository = await getRepository(User);
+     const users = await userRepository.find({
+            select: ["id", "firstName", "lastName", "email", "isAdmin", "confirmation", "createdAt", "date"]
+     })
+        //console.log('Users', users)
+    // looping through the users
+    await users.forEach(user => {
+      //console.log('user', user)
+        const lastLoginDate = user.date;
+        console.log('lastLoginDate', lastLoginDate)  
+        //const reminderDate = moment(lastLoginDate).add(5, 'M');
+        const reminderDate = moment(lastLoginDate).add(1, 'd');
+        const reminderDateUtcFormat = moment(reminderDate).utc()
+        const reminderDateToDate = reminderDateUtcFormat.toDate()
+        const reminderDateMilliseconds: number = reminderDateToDate.getTime()
+        console.log(typeof reminderDateMilliseconds) //return number
+        console.log('reminderDate millisecondTime ', reminderDateMilliseconds) //return number 
+        //console.log('future converted date', new Date(1646730477191))
+
+        const currentDate = new Date()
+        console.log("current Date", currentDate)
+        const currentDateMilliseconds: number = currentDate.getTime()
+        console.log(typeof currentDateMilliseconds) //return number
+        console.log('CurrentDate millisecondTime', currentDateMilliseconds) //return number
+        //console.log('current converted date', new Date(1633720680308))
+
+        console.log( currentDateMilliseconds >=  reminderDateMilliseconds); 
+        
+         //console.log( 'true/false', reminderDate === currentDate ) //return number
+        // Sending the Mail
+          if(currentDateMilliseconds >=  reminderDateMilliseconds ){
+            //const url = `http://localhost:4000/api/users/confirmation/${token}`;
+        if (user.isAdmin === false) {
+            const message = 'Hello Please reacitivate your account. If you are no more interseted to reactivate this account, please ignore this email'
+            const url = `http://localhost:4000/api/users/reConfirmation/${user.id}`            
+         
+            return sendMail(user.email, user.lastName, url, message)
+       } 
+        } 
+        
+    });
+    };
+
+
+    static deleteDeactivatedAccount = async () => {
+
+    //console.log(`now: ${new Date()}`);
+    ///The Main Function 
+    const userRepository = await getRepository(User);
+     const users = await userRepository.find({
+            select: ["id", "firstName", "lastName", "email", "isAdmin", "confirmation", "createdAt", "date"]
+     })
+        //console.log('Users', users)
+    // looping through the users
+        await users.forEach(user => {
+        if (user.isAdmin === false) {
+            console.log('user', user)            
+        const lastLoginDate = user.date;
+        console.log('lastLoginDate', lastLoginDate)  
+        //const reminderDate = moment(lastLoginDate).add(5, 'M');
+        const reminderDate = moment(lastLoginDate).add(2, 'd');
+        const reminderDateUtcFormat = moment(reminderDate).utc()
+        const reminderDateToDate = reminderDateUtcFormat.toDate()
+        const reminderDateMilliseconds: number = reminderDateToDate.getTime()
+        console.log(typeof reminderDateMilliseconds) //return number
+        console.log('Delete reminderDate millisecondTime ', reminderDateMilliseconds) //return number 
+        //console.log('future converted date', new Date(1646730477191))
+
+        const currentDate = new Date()
+        console.log("Delete current Date", currentDate)
+        const currentDateMilliseconds: number = currentDate.getTime()
+        console.log(typeof currentDateMilliseconds) //return number
+        console.log('Delete CurrentDate millisecondTime', currentDateMilliseconds) //return number
+        //console.log('current converted date', new Date(1633720680308))
+
+        console.log( currentDateMilliseconds >=  reminderDateMilliseconds); 
+        
+         //console.log( 'true/false', reminderDate === currentDate ) //return number
+        // Sending the Mail
+          if(currentDateMilliseconds >=  reminderDateMilliseconds ){
+            return  userRepository.delete(user.id);             
+       } 
+        } 
+        
+    });
+    };
+    
+    static reActivateAcount = async (req: Request, res: Response) => {
+            
+        const id = await req.params.id
+        
+        if (id) {
+
+            try {
+                    
+                const userRepository = getRepository(User);
+            
+                const user = await userRepository.findOneOrFail(id);
+        
+                user.date = await new Date()                
+            
+                console.log('user', user)                
+            
+                const errors = await validate(user);                
+            
+                if (errors.length > 0) {
+                
+                    res.send(errors);
+                    
+                    return;
+                    
+                }
+                
+                await userRepository.save(user);
+                            
+                res.send(user);
+                            
+            } catch (e) {
+                            
+                res.send('error');
+                            
+            }
+            
+        } else {
+            res.send('Id not matched')            
+        }
+            
+        //return res.redirect('http://localhost:3001/login');
+        
+    }
 
     static activateAcount = async (req: Request, res: Response) => {
             
