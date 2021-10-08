@@ -36,12 +36,15 @@ export class User {
 
      @Column('boolean', {default: false})
     confirmation: boolean;
-    
+
     @Column()
+    date!: Date    
+    
+    @Column({ type: 'timestamptz', nullable: true })
     @CreateDateColumn()        
     createdAt!: Date;     
 
-    @Column()
+    @Column({ type: 'timestamptz', nullable: true })
     @UpdateDateColumn()        
     updatedAt!: Date;
     
