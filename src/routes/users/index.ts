@@ -8,7 +8,7 @@ import UserController from '../../controllers/UserController'
 
 const router = express.Router();
 
-//Routes
+//Routes for Users
 
 router.post("/register", passport.authenticate("auth.register"), tokenHandler);
 
