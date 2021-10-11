@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken'
 import { TokenPairs } from "../utils/jwt/jwt";
 import sendMail from '../config/nodemailerConfig'
 import moment from 'moment'
-const {  JWT_ACCESS_SECRET } = process.env;
+const {  JWT_ACCESS_SECRET, LOCALHOST_HOSTNAME } = process.env;
 
 class UserController {
 
@@ -48,7 +48,7 @@ class UserController {
             //const url = `http://localhost:4000/api/users/confirmation/${token}`;
         if (user.isAdmin === false) {
             const message = 'Hello Please reacitivate your account. If you are no more interseted to reactivate this account, please ignore this email'
-            const url = `http://localhost:4000/api/users/reConfirmation/${user.id}`            
+            const url = `${LOCALHOST_HOSTNAME}/api/users/reConfirmation/${user.id}`            
          
             return sendMail(user.email, user.lastName, url, message)
        } 
@@ -274,7 +274,7 @@ class UserController {
                 
                 const tokens = await TokenPairs({ id: user.id });        
                 const token: any = tokens.accessToken
-                const url = `http://localhost:4000/api/users/confirmation/${token}`;
+                const url = `${LOCALHOST_HOSTNAME}/api/users/confirmation/${token}`;
                 const message = 'confirm your email'
                 await sendMail(email, user.lastName, url, message)
 
@@ -301,7 +301,7 @@ class UserController {
                 
                 const tokens = await TokenPairs({ id: user.id });        
                 const token: any = tokens.accessToken
-                const url = `http://localhost:4000/api/users/passwordChange/${token}`;
+                const url = `${LOCALHOST_HOSTNAME}/api/users/passwordChange/${token}`;
                 const message = 'change your password'
 
                 await sendMail(email, user.lastName, url, message)
