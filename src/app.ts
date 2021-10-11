@@ -15,8 +15,8 @@ import cron from 'node-cron';
 import UserController from "./controllers/UserController";
 
 
-cron.schedule('* * * * *', UserController.sendReminder);
-cron.schedule('* * * * *', UserController.deleteDeactivatedAccount);
+cron.schedule('0 0 */12 * *', UserController.sendReminder);   
+cron.schedule('0 0 */12 * *', UserController.deleteDeactivatedAccount);
 
 const app: Application = express();
 
