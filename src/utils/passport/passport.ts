@@ -16,7 +16,7 @@ import sendMail from '../../config/nodemailerConfig';
 
 import { Request, Response } from 'express';
 
-const { JWT_ISSUER, JWT_AUDIENCE, JWT_ACCESS_SECRET } = process.env;
+const { JWT_ISSUER, JWT_AUDIENCE, JWT_ACCESS_SECRET, LOCALHOST_HOSTNAME } = process.env;
 
 
 //JwtStrategy for own access
@@ -374,7 +374,7 @@ passport.use(
        /*  let decode = jwt.verify(token,JWT_ACCESS_SECRET )
         console.log('decode', (<any>decode).id)
         console.log('token', token) */
-        const url = `http://localhost:4000/api/users/confirmation/${token}`;
+        const url = `${LOCALHOST_HOSTNAME}/api/users/confirmation/${token}`;
         const message = 'confirm your email'
         await sendMail(email, user.lastName, url, message)
         done(null, { user, emailLink:url });
