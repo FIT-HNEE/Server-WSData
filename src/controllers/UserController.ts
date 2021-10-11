@@ -24,21 +24,21 @@ class UserController {
       //console.log('user', user)
         const lastLoginDate = user.date;
         console.log('lastLoginDate', lastLoginDate)  
-        //const reminderDate = moment(lastLoginDate).add(5, 'M');
-        const reminderDate = moment(lastLoginDate).add(1, 'd');
+        const reminderDate = moment(lastLoginDate).add(4, 'M');
+        //const reminderDate = moment(lastLoginDate).add(1, 'd');   # For test only
         const reminderDateUtcFormat = moment(reminderDate).utc()
         const reminderDateToDate = reminderDateUtcFormat.toDate()
         const reminderDateMilliseconds: number = reminderDateToDate.getTime()
         console.log(typeof reminderDateMilliseconds) //return number
         console.log('reminderDate millisecondTime ', reminderDateMilliseconds) //return number 
-        //console.log('future converted date', new Date(1646730477191))
+        console.log('Reminder future converted date', new Date(reminderDateMilliseconds))
 
         const currentDate = new Date()
         console.log("current Date", currentDate)
         const currentDateMilliseconds: number = currentDate.getTime()
         console.log(typeof currentDateMilliseconds) //return number
         console.log('CurrentDate millisecondTime', currentDateMilliseconds) //return number
-        //console.log('current converted date', new Date(1633720680308))
+        console.log('Reminder current converted date', new Date(currentDateMilliseconds))
 
         console.log( currentDateMilliseconds >=  reminderDateMilliseconds); 
         
@@ -73,27 +73,27 @@ class UserController {
             console.log('user', user)            
         const lastLoginDate = user.date;
         console.log('lastLoginDate', lastLoginDate)  
-        //const reminderDate = moment(lastLoginDate).add(5, 'M');
-        const reminderDate = moment(lastLoginDate).add(2, 'd');
-        const reminderDateUtcFormat = moment(reminderDate).utc()
-        const reminderDateToDate = reminderDateUtcFormat.toDate()
-        const reminderDateMilliseconds: number = reminderDateToDate.getTime()
-        console.log(typeof reminderDateMilliseconds) //return number
-        console.log('Delete reminderDate millisecondTime ', reminderDateMilliseconds) //return number 
-        //console.log('future converted date', new Date(1646730477191))
+        const accountDeletionDate = moment(lastLoginDate).add(5, 'M');
+        //const accountDeletionDate = moment(lastLoginDate).add(2, 'd');
+        const accountDeletionDateUtcFormat = moment(accountDeletionDate).utc()
+        const accountDeletionDateToDate = accountDeletionDateUtcFormat.toDate()
+        const accountDeletionDateMilliseconds: number = accountDeletionDateToDate.getTime()
+        console.log(typeof accountDeletionDateMilliseconds) //return number
+        console.log('Delete accountDeletionDate millisecondTime ', accountDeletionDateMilliseconds) //return number 
+        console.log('accountDeletionDate converted date', new Date(accountDeletionDateMilliseconds))
 
         const currentDate = new Date()
         console.log("Delete current Date", currentDate)
         const currentDateMilliseconds: number = currentDate.getTime()
         console.log(typeof currentDateMilliseconds) //return number
         console.log('Delete CurrentDate millisecondTime', currentDateMilliseconds) //return number
-        //console.log('current converted date', new Date(1633720680308))
+        console.log('accountDeletionDate current converted date', new Date(currentDateMilliseconds))
 
-        console.log( currentDateMilliseconds >=  reminderDateMilliseconds); 
+        console.log( currentDateMilliseconds >=  accountDeletionDateMilliseconds); 
         
-         //console.log( 'true/false', reminderDate === currentDate ) //return number
+         //console.log( 'true/false', accountDeletionDate === currentDate ) //return number
         // Sending the Mail
-          if(currentDateMilliseconds >=  reminderDateMilliseconds ){
+          if(currentDateMilliseconds >=  accountDeletionDateMilliseconds ){
             return  userRepository.delete(user.id);             
        } 
         } 
