@@ -6,6 +6,7 @@ const router = express.Router();
 
 //Routes for Weather Data
 
-router.post("/", WeatherDataController.weatherData);
+router.get("/lastSevenDays", WeatherDataController.lastSevenDaysWeatherData);
+router.post("/", WeatherDataController.selectiveWeatherData);
 
 export default router;
