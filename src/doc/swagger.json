@@ -531,6 +531,72 @@
           }
         }
       }
+    },
+    "/api/weatherData": {
+      "post": {
+        "tags": ["Weather Data"],
+        "summary": "Weather data search for particular station and dates",
+        "requestBody": {
+          "description": "Weather Data Search",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WeatherDataInputs"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucessfully fetch the requested data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeatherDataSearchResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/weatherData/lastSevenDays": {
+      "get": {
+        "tags": ["Weather Data"],
+        "summary": "Returns Last Seven Days Weather Data",       
+        "responses": {
+          "200": {
+            "description": "Sucessfully fetch the requested data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeatherDataSearchResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
     
   },
@@ -641,6 +707,23 @@
           }
         }
       },
+      "WeatherDataInputs": {
+        "type": "object",
+        "properties": {
+          "StationName": {
+            "type": "string",
+            "example": "Buche"
+          },
+          "StartDay": {
+            "type": "string",
+            "example": "2021-11-18"
+          },
+          "EndDay": {
+            "type": "string",
+            "example": "2021-11-19"
+          }
+        }
+      },
       "UserSearch": {
         "type": "object",
         "properties": {
@@ -706,6 +789,129 @@
             "items": {
               "$ref": "#/components/schemas/ErrorResponse"
             }
+          }
+        }
+      },
+      "WeatherDataSearchResponse": {
+        "type": "object",
+        "required": [
+          "header",
+          "data"
+        ],
+        "properties": {
+          "header": {
+        "type": "object",
+        "properties": {
+          "k1": {
+            "type": "string", 
+            "example": "Power - V"
+          },
+          "k2": {
+            "type": "string",
+            "example": "Cold junction - deg C"
+          },
+          "k3": {
+            "type": "string",
+            "example": "Lufttemp_u - "
+          },          
+          "k4": {
+            "type": "string",
+            "example": "Lufttemp_u - °C"
+          },
+          "k5": {
+            "type": "string",
+            "example": "Luftfeuchte_o - %rF "
+          },
+          "k6": {
+            "type": "string",
+            "example": "Luftfeuchte_u - %rF"
+          },
+          "k7": {
+            "type": "string",
+            "example": "Rain#@15m - mm"
+          },
+          "k8": {
+            "type": "string",
+            "example": "Windgeschwindigkeit#@15m - m/s"
+          },
+          "k9": {
+            "type": "string",
+            "example": "PAR_o - mV"
+          },
+          "k10": {
+            "type": "string",
+            "example": "PAR_u - mV"
+          },
+          "k11": {
+            "type": "string",
+            "example": "Theta_10 - %"
+          },
+          "k12": {
+            "type": "string",
+            "example": "Theta_25 - %"
+          },
+          "k13": {
+            "type": "string",
+            "example": "Theta_55 - %"
+          },
+          "k14": {
+            "type": "string",
+            "example": "Theta_115 - %"
+          },
+          "k15": {
+            "type": "string",
+            "example": "SoilTemp_10 - deg C"
+          },
+          "k16": {
+            "type": "string",
+            "example": "SoilTemp_25 - deg C"
+          },
+          "k17": {
+            "type": "string",
+            "example": "SoilTemp_55 - deg C"
+          },
+          "k18": {
+            "type": "string",
+            "example": "SoilTemp_115 - deg C"
+          },
+          "k19": {
+            "type": "string",
+            "example": "pF_10 - pF"
+          },
+          "k20": {
+            "type": "string",
+            "example": "pF_25 - pF"
+          },
+          "k21": {
+            "type": "string",
+            "example": "pF_55 - pF"
+          },
+          "k22": {
+            "type": "string",
+            "example": "pF_115 - pF"
+          },
+          "k23": {
+            "type": "string",
+            "example": "-"
+          },
+          "k24": {
+            "type": "string",
+            "example": "-"
+          },
+          "k25": {
+            "type": "string",
+            "example": "-"
+          },
+          "dateTime": {
+            "type": "string",
+            "example": "Datetime"
+          }
+        }
+      
+          },
+          "data":{
+            "type": "array"
+            
           }
         }
       },
