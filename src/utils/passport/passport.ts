@@ -275,6 +275,40 @@ passport.use(
   )
 );
 
+// get user information through its ID by Admin role
+passport.use(
+  "scope.userId",
+  new JwtStrategy(
+    opts,    
+    async function (req, jwt_payload, done) {      
+      try {
+        const { id } = jwt_payload;
+        //let params: any = req.params
+        console.log('jwt_payload',jwt_payload)
+        const userRepository = getRepository(User);
+        const userAdmin = await userRepository.findOneOrFail(id);
+        
+        //console.log('user', user)
+        //console.log('jwt_payload id', typeof id)
+        //console.log('req.params.id id', typeof req.params.id)
+        if (userAdmin.isAdmin !== true ) {
+          done("Admin role is required!", null);
+        } else {
+          let userId = req.params.id                  
+            //Try to find user on database
+            const userRepository = getRepository(User);            
+            const user = await userRepository.findOneOrFail({id:userId}) 
+            done(null, user);            
+          }
+        
+      } catch (error) {
+        console.log(error);
+        done(`Something went wrong: ${error} `, null);
+      }
+    }
+  )
+);
+
 //Log in local strategy
 passport.use(
   "auth.login",
