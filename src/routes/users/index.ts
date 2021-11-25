@@ -24,6 +24,8 @@ router.get("/me", passport.authenticate("auth.jwt"), tokenHandler);
 
 router.get("/", passport.authenticate("scope.all"), tokenHandler)
 
+router.get("/:id", passport.authenticate("scope.userId"), tokenHandler)
+
 router.post("/search", passport.authenticate("scope.search"), tokenHandler)
 
 router.post('/forgotPassword', UserController.forgotPassword)
