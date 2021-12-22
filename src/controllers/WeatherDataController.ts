@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import fetch from 'node-fetch';
-const { API_KEY_WEATHER_DATA, WEBVIS_DATA_PROVIDER } = process.env
+const { API_KEY_WEATHER_DATA, WEBVIS_DATA_PROVIDER, APP_URL } = process.env
 import moment from 'moment'
 class WeatherDataController {
 
@@ -47,6 +47,26 @@ class WeatherDataController {
             console.log(error);            
         }    
     } 
+
+    static weatherDataForecast = async (_req: Request, res: Response) => {
+       let array = []         
+         
+        try {
+           
+            
+            await fetch(APP_URL)
+                .then(resp => resp.json())
+                .then(data => {
+                    array.push(data)
+                })
+                .catch(err => {                
+                    console.log(err)                    
+                })
+            await res.send(array)
+        } catch (error) {
+            console.log(error);            
+        }    
+    }
 }
 
 export default WeatherDataController; 
