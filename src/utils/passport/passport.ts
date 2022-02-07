@@ -187,7 +187,7 @@ passport.use(
             done("Id is incorrect or authorization", null);
           } else {
             //Get values from the body
-            const { firstName, lastName, isAdmin, email, password } = req.body;           
+            const { firstName, lastName, isAdmin, email, password, confirmation } = req.body;           
             
             //Try to find user on database
             const userRepository = getRepository(User);            
@@ -197,7 +197,8 @@ passport.use(
             user.lastName = lastName;            
             user.isAdmin = isAdmin;
             user.email = email;            
-            user.password = password;            
+            user.password = password;
+            user.confirmation = confirmation;
             if (password) {
               user.hashPassword();
             } 
