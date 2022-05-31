@@ -68,7 +68,8 @@
     "reflect-metadata": "^0.1.13",
     "swagger-ui-express": "^4.1.6",
     "ts-node-dev": "^1.1.8",
-    "typeorm": "^0.2.37"
+    "typeorm": "^0.2.37",
+    "typeorm-extension": "^1.0.2"
   },
   "scripts": {
     "tsc": "tsc",

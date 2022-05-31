@@ -9,5 +9,6 @@ const router = express.Router();
 router.get("/lastSevenDays", WeatherDataController.lastSevenDaysWeatherData);
 router.get("/forecast", WeatherDataController.weatherDataForecast);
 router.post("/", WeatherDataController.selectiveWeatherData);
+router.get('/stationLocation',WeatherDataController.stationLocation)
 
 export default router;

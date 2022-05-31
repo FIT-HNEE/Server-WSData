@@ -22,6 +22,25 @@ class WeatherDataController {
             console.log(error);            
         }    
     }
+
+    static stationLocation = async (_req: Request, res: Response) => {
+      
+        try {
+            let url = `${WEBVIS_DATA_PROVIDER}/api/${API_KEY_WEATHER_DATA}/buche/2021-12-10/2021-12-10/1/0/1`
+            
+            await fetch(url)
+                .then(resp => resp.json())
+                .then(data => {
+                    res.send(data.geoData)
+                })
+                .catch(err => {                
+                    console.log(err)                    
+                })
+            
+        } catch (error) {
+            console.log(error);            
+        }    
+    }
     
     static lastSevenDaysWeatherData = async (_req: Request, res: Response) => {
         
